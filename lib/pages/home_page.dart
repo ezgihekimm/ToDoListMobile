@@ -25,14 +25,38 @@ class _HomePageState extends State<HomePage> {
       toDoList[index][1] = !toDoList[index][1];
     });
   }
+
+  //save new task
+  void saveNewTask(){
+    setState((){
+      toDoList.add([_controller.text, false]);
+    });
+    Navigator.of(context).pop();
+  }
+
   //create new task
   void createNewTask(){
     showDialog(
       context: context,
       builder: (context){
-      return DialogBox(controller: _controller,);
+      return DialogBox(
+        controller: _controller,
+        onSave: saveNewTask,
+        onCancel:() => Navigator.of(context).pop(),);
     }
     );
+    // reset the text field
+    _controller.text = "";
+    
+  }
+
+  //delete task
+  void deleteTask(int index){
+    setState(() {
+      toDoList.removeAt(index);
+    });
+    // reset the text field
+    _controller.text = "";
   }
 
   @override
@@ -53,7 +77,8 @@ class _HomePageState extends State<HomePage> {
           return ToDoTile(
             taskName: toDoList[index][0],
             taskCompleted: toDoList[index][1],
-            onChanged: (value) => checkBoxChanged(value, index)
+            onChanged: (value) => checkBoxChanged(value, index),
+            deleteFunction: (context) => deleteTask(index),            
           );
         },
       ),
